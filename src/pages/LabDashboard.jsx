@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import OscilloscopeCase from '../components/Layout/OscilloscopeCase';
 import ScreenGrid from '../components/Layout/ScreenGrid';
-import SignalChart from '../components/Graphs/SignalChart'; // <--- Nuevo
-import { useSignalGenerator } from '../hooks/useSignalGenerator'; // <--- Nuevo
+import SignalChart from '../components/Graphs/SignalChart';
+import { useSignalGenerator } from '../hooks/useSignalGenerator';
 
 const LabDashboard = () => {
   // Estado para guardar lo que escribe el usuario
@@ -12,18 +12,18 @@ const LabDashboard = () => {
   const { labels, points } = useSignalGenerator(binaryInput);
 
   return (
-    <OscilloscopeCase title="MODULADOR DE SEÑALES v1.0">
+    <OscilloscopeCase title="MODULADOR DE SEÑALES">
       
       {/* Lado Izquierdo: Controles */}
       <div className="w-full lg:w-1/3 bg-gray-800/50 p-4 rounded border border-gray-700">
         <h2 className="text-osci-secondary mb-4 border-b border-gray-600 pb-2">CONFIGURACIÓN</h2>
         
         <div className="space-y-4">
-           {/* Selector de Tipo (Por ahora decorativo) */}
+           {/* Selector de Tipo */}
            <div className="bg-black/30 p-3 rounded border border-gray-600">
               <label className="block text-gray-400 text-xs mb-1">TÉCNICA DE MODULACIÓN</label>
               <select className="w-full bg-gray-900 text-osci-text border border-gray-600 rounded p-1 text-sm focus:outline-none focus:border-osci-primary">
-                  <option>ASK (Amplitude Shift Keying)</option>
+                  <option>ASK (Modulación por desplazamiento de amplitud)</option>
                   <option disabled>FSK (Próximamente...)</option>
               </select>
            </div>
