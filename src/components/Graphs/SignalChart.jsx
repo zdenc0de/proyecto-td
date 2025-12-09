@@ -8,11 +8,10 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler // Importante para rellenar áreas si quisiéramos
+  Filler
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
-// 1. Registramos los módulos de ChartJS que vamos a usar
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,62 +23,122 @@ ChartJS.register(
   Filler
 );
 
-const SignalChart = ({ dataPoints, labels }) => {
+const SignalChart = ({
+  dataPoints,
+  labels,
+  messageSignal = null,
+  carrierSignal = null,
+  showMessage = false,
+  showCarrier = false,
+  yMin = -1.5,
+  yMax = 1.5,
+  title = 'Amplitud (V)',
+  stepped = false // Para señales digitales cuadradas
+}) => {
 
-  // 2. Configuración de datos y colores (Estilo Neón)
-  const data = {
-    labels: labels, // Eje X (Tiempo)
-    datasets: [
-      {
-        label: 'Amplitud (V)',
-        data: dataPoints, // Eje Y (Valores de la onda)
-        borderColor: '#22c55e', // Color osci-primary (Verde)
-        backgroundColor: 'rgba(34, 197, 94, 0.1)', // Un brillo suave debajo de la línea
-        borderWidth: 2,
-        tension: 0.4, // Suavizado de la curva (0 = rectas, 1 = muy curvo)
-        pointRadius: 0, // Ocultamos los puntos para que parezca señal continua
-      },
-    ],
-  };
+  const datasets = [
+    {
+      label: title,
+      data: dataPoints,
+      borderColor: '#22c55e',
+      backgroundColor: 'rgba(34, 197, 94, 0.05)',
+      borderWidth: 1.5,
+      tension: stepped ? 0 : 0.3,
+      pointRadius: 0,
+      stepped: stepped ? 'before' : false,
+      fill: false,
+    },
+  ];
 
-  // 3. Configuración del "Look & Feel" del Osciloscopio
+  if (showMessage && messageSignal?.length > 0) {
+    datasets.push({
+      label: 'Señal Mensaje',
+      data: messageSignal,
+      borderColor: '#f59e0b',
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      tension: 0.3,
+      pointRadius: 0,
+      borderDash: [4, 4],
+    });
+  }
+
+  if (showCarrier && carrierSignal?.length > 0) {
+    datasets.push({
+      label: 'Señal Portadora',
+      data: carrierSignal,
+      borderColor: '#0ea5e9',
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      tension: 0.3,
+      pointRadius: 0,
+      borderDash: [2, 2],
+    });
+  }
+
+  const data = { labels, datasets };
+
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Se adapta al tamaño del contenedor padre
-    animation: {
-      duration: 0, // Desactivamos animación para que se sienta instantáneo al escribir
+    maintainAspectRatio: false,
+    animation: { duration: 0 },
+    interaction: {
+      mode: 'index',
+      intersect: false,
     },
     scales: {
       x: {
+        display: true,
         grid: {
-          color: '#1f2937', // Color de la rejilla (osci-grid)
-          borderColor: '#374151',
-        },
-        ticks: {
-          color: '#6b7280', // Color del texto eje X
-          maxTicksLimit: 10, // Para no saturar de números
-        }
-      },
-      y: {
-        min: -1.5, // Fijamos altura para que la onda no "baile"
-        max: 1.5,
-        grid: {
-          color: '#1f2937', // Color de la rejilla
-          borderColor: '#374151',
+          color: 'rgba(75, 85, 99, 0.3)',
+          drawBorder: false,
         },
         ticks: {
           color: '#6b7280',
+          maxTicksLimit: 8,
+          font: { size: 9 }
+        }
+      },
+      y: {
+        min: yMin,
+        max: yMax,
+        grid: {
+          color: 'rgba(75, 85, 99, 0.3)',
+          drawBorder: false,
+        },
+        ticks: {
+          color: '#6b7280',
+          font: { size: 9 },
+          stepSize: (yMax - yMin) / 4
         }
       },
     },
     plugins: {
       legend: {
-        display: false, // Ocultamos la leyenda para más realismo
+        display: showMessage || showCarrier,
+        position: 'top',
+        align: 'end',
+        labels: {
+          color: '#9ca3af',
+          font: { size: 9 },
+          boxWidth: 12,
+          padding: 8
+        }
       },
       tooltip: {
         enabled: true,
-        mode: 'index',
-        intersect: false,
+        backgroundColor: 'rgba(17, 24, 39, 0.9)',
+        titleColor: '#e5e7eb',
+        bodyColor: '#9ca3af',
+        borderColor: '#374151',
+        borderWidth: 1,
+        padding: 8,
+        displayColors: true,
+        callbacks: {
+          label: (context) => {
+            return `${context.dataset.label}: ${context.parsed.y.toFixed(3)}`;
+          }
+        }
       }
     },
   };
