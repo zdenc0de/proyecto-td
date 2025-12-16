@@ -2,6 +2,7 @@
  * Generadores de señales para categoría: Señal Analógica / Dato Analógico
  * Técnicas: AM, FM, PM
  */
+import { compileFunction } from '../../utils/functionParser';
 
 /**
  * Genera señal AM (Amplitude Modulation)
@@ -13,7 +14,8 @@ export const generateAM = (params) => {
     messageFreq = 1,
     modulationIndex = 0.5,
     duration = 2,
-    samplesPerSecond = 500
+    samplesPerSecond = 500,
+    customFunction = null
   } = params;
 
   const totalSamples = Math.floor(duration * samplesPerSecond);
@@ -22,12 +24,22 @@ export const generateAM = (params) => {
   const messageSignal = [];
   const carrierSignal = [];
 
+  // Compilar función personalizada o usar seno por defecto
+  let messageFunc;
+  try {
+    messageFunc = customFunction ? compileFunction(customFunction) : null;
+  } catch {
+    messageFunc = null;
+  }
+
   for (let i = 0; i < totalSamples; i++) {
     const t = i / samplesPerSecond;
     labels.push(t.toFixed(3));
 
-    // Señal mensaje (moduladora)
-    const m_t = Math.sin(2 * Math.PI * messageFreq * t);
+    // Señal mensaje (moduladora) - usa función personalizada o seno
+    const m_t = messageFunc
+      ? messageFunc(t * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * t);
     messageSignal.push(m_t);
 
     // Señal portadora
@@ -53,7 +65,8 @@ export const generateFM = (params) => {
     messageFreq = 1,
     frequencyDeviation = 5,
     duration = 2,
-    samplesPerSecond = 500
+    samplesPerSecond = 500,
+    customFunction = null
   } = params;
 
   const totalSamples = Math.floor(duration * samplesPerSecond);
@@ -65,20 +78,37 @@ export const generateFM = (params) => {
   // Índice de modulación FM
   const beta = frequencyDeviation / messageFreq;
 
+  // Compilar función personalizada o usar seno por defecto
+  let messageFunc;
+  try {
+    messageFunc = customFunction ? compileFunction(customFunction) : null;
+  } catch {
+    messageFunc = null;
+  }
+
+  // Para FM necesitamos la integral de m(t), aproximamos con suma acumulativa
+  let phaseAccum = 0;
+  const dt = 1 / samplesPerSecond;
+
   for (let i = 0; i < totalSamples; i++) {
     const t = i / samplesPerSecond;
     labels.push(t.toFixed(3));
 
     // Señal mensaje
-    const m_t = Math.sin(2 * Math.PI * messageFreq * t);
+    const m_t = messageFunc
+      ? messageFunc(t * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * t);
     messageSignal.push(m_t);
 
     // Señal portadora (referencia)
     const carrier = Math.cos(2 * Math.PI * carrierFreq * t);
     carrierSignal.push(carrier);
 
+    // Acumular fase (integral numérica de m(t))
+    phaseAccum += m_t * dt * messageFreq;
+
     // Señal FM modulada - la fase instantánea cambia con la integral de m(t)
-    const y = Math.cos(2 * Math.PI * carrierFreq * t + beta * Math.sin(2 * Math.PI * messageFreq * t));
+    const y = Math.cos(2 * Math.PI * carrierFreq * t + beta * 2 * Math.PI * phaseAccum);
     points.push(y);
   }
 
@@ -95,7 +125,8 @@ export const generatePM = (params) => {
     messageFreq = 1,
     phaseDeviation = Math.PI / 2,
     duration = 2,
-    samplesPerSecond = 500
+    samplesPerSecond = 500,
+    customFunction = null
   } = params;
 
   const totalSamples = Math.floor(duration * samplesPerSecond);
@@ -104,12 +135,22 @@ export const generatePM = (params) => {
   const messageSignal = [];
   const carrierSignal = [];
 
+  // Compilar función personalizada o usar seno por defecto
+  let messageFunc;
+  try {
+    messageFunc = customFunction ? compileFunction(customFunction) : null;
+  } catch {
+    messageFunc = null;
+  }
+
   for (let i = 0; i < totalSamples; i++) {
     const t = i / samplesPerSecond;
     labels.push(t.toFixed(3));
 
     // Señal mensaje
-    const m_t = Math.sin(2 * Math.PI * messageFreq * t);
+    const m_t = messageFunc
+      ? messageFunc(t * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * t);
     messageSignal.push(m_t);
 
     // Señal portadora (referencia)

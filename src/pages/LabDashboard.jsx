@@ -4,6 +4,7 @@ import ScreenGrid from '../components/Layout/ScreenGrid';
 import SignalChart from '../components/Graphs/SignalChart';
 import { useSignal } from '../hooks/useSignal';
 import { SIGNAL_CATEGORIES, TECHNIQUES, DEFAULT_ANALOG_PARAMS } from '../config/signalTypes';
+import { validateExpression, PRESET_FUNCTIONS } from '../utils/functionParser';
 
 const LabDashboard = () => {
   // Estado para categoría y técnica seleccionada
@@ -34,11 +35,16 @@ const LabDashboard = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [showCarrier, setShowCarrier] = useState(false);
 
+  // Estado para función personalizada del mensaje
+  const [customFunction, setCustomFunction] = useState('sin(2*PI*t)');
+  const [functionError, setFunctionError] = useState(null);
+
   // Memoizar parámetros para el hook
   const signalParams = useMemo(() => ({
     ...analogParams,
-    binaryInput
-  }), [analogParams, binaryInput]);
+    binaryInput,
+    customFunction: functionError ? null : customFunction
+  }), [analogParams, binaryInput, customFunction, functionError]);
 
   // Hook unificado para generar señales
   const signal = useSignal(selectedCategory, selectedTechnique, signalParams);
@@ -71,6 +77,19 @@ const LabDashboard = () => {
       ...prev,
       [param]: parseFloat(value) || 0
     }));
+  };
+
+  // Manejar cambio de función personalizada
+  const handleFunctionChange = (value) => {
+    setCustomFunction(value);
+    const validation = validateExpression(value);
+    setFunctionError(validation.valid ? null : validation.error);
+  };
+
+  // Aplicar función predefinida
+  const applyPreset = (expression) => {
+    setCustomFunction(expression);
+    setFunctionError(null);
   };
 
   // Calcular límites Y según categoría
@@ -150,6 +169,41 @@ const LabDashboard = () => {
           {/* Controles para señales analógicas (AM, FM, PM) */}
           {isAnalogAnalog && (
             <>
+              {/* Función personalizada del mensaje */}
+              <div>
+                <label className="block text-gray-500 text-[10px] mb-1">Función del Mensaje m(t)</label>
+                <input
+                  type="text"
+                  value={customFunction}
+                  onChange={(e) => handleFunctionChange(e.target.value)}
+                  placeholder="Ej: sin(2*PI*t)"
+                  className={`w-full bg-osci-screen text-osci-secondary font-mono text-sm border rounded px-2 py-1.5 focus:outline-none ${
+                    functionError
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-gray-600 focus:border-osci-secondary'
+                  }`}
+                />
+                {functionError && (
+                  <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
+                )}
+                <p className="text-[9px] text-gray-600 mt-1">
+                  Usa: sin, cos, tan, abs, sqrt, exp, PI, t
+                </p>
+                {/* Funciones predefinidas */}
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {PRESET_FUNCTIONS.map((preset) => (
+                    <button
+                      key={preset.name}
+                      onClick={() => applyPreset(preset.expression)}
+                      title={preset.description}
+                      className="text-[9px] px-1.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-osci-secondary rounded transition-colors"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
                   <span>Frec. Portadora</span>
@@ -165,7 +219,7 @@ const LabDashboard = () => {
 
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Mensaje</span>
+                  <span>Frec. Mensaje (referencia)</span>
                   <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
                 </div>
                 <input
@@ -276,9 +330,42 @@ const LabDashboard = () => {
           {/* Controles para PCM */}
           {isDigitalAnalog && selectedTechnique === 'PCM' && (
             <>
+              {/* Función personalizada para PCM */}
+              <div>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la Señal m(t)</label>
+                <input
+                  type="text"
+                  value={customFunction}
+                  onChange={(e) => handleFunctionChange(e.target.value)}
+                  placeholder="Ej: sin(2*PI*t)"
+                  className={`w-full bg-osci-screen text-osci-secondary font-mono text-sm border rounded px-2 py-1.5 focus:outline-none ${
+                    functionError
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-gray-600 focus:border-osci-secondary'
+                  }`}
+                />
+                {functionError && (
+                  <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
+                )}
+                <p className="text-[9px] text-gray-600 mt-1">
+                  Usa: sin, cos, tan, abs, sqrt, exp, PI, t
+                </p>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {PRESET_FUNCTIONS.slice(0, 3).map((preset) => (
+                    <button
+                      key={preset.name}
+                      onClick={() => applyPreset(preset.expression)}
+                      title={preset.description}
+                      className="text-[9px] px-1.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-osci-secondary rounded transition-colors"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Señal</span>
+                  <span>Frec. Señal (referencia)</span>
                   <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
                 </div>
                 <input
@@ -318,9 +405,42 @@ const LabDashboard = () => {
           {/* Controles para DM */}
           {isDigitalAnalog && selectedTechnique === 'DM' && (
             <>
+              {/* Función personalizada para DM */}
+              <div>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la Señal m(t)</label>
+                <input
+                  type="text"
+                  value={customFunction}
+                  onChange={(e) => handleFunctionChange(e.target.value)}
+                  placeholder="Ej: sin(2*PI*t)"
+                  className={`w-full bg-osci-screen text-osci-secondary font-mono text-sm border rounded px-2 py-1.5 focus:outline-none ${
+                    functionError
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-gray-600 focus:border-osci-secondary'
+                  }`}
+                />
+                {functionError && (
+                  <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
+                )}
+                <p className="text-[9px] text-gray-600 mt-1">
+                  Usa: sin, cos, tan, abs, sqrt, exp, PI, t
+                </p>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {PRESET_FUNCTIONS.slice(0, 3).map((preset) => (
+                    <button
+                      key={preset.name}
+                      onClick={() => applyPreset(preset.expression)}
+                      title={preset.description}
+                      className="text-[9px] px-1.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-osci-secondary rounded transition-colors"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Señal</span>
+                  <span>Frec. Señal (referencia)</span>
                   <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
                 </div>
                 <input

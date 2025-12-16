@@ -2,6 +2,7 @@
  * Generadores de señales para categoría: Señal Digital / Dato Analógico
  * Técnicas: PCM, DM (Delta Modulation)
  */
+import { compileFunction } from '../../utils/functionParser';
 
 /**
  * PCM (Pulse Code Modulation)
@@ -12,12 +13,21 @@ export const generatePCM = (params = {}) => {
     messageFreq = 1,
     samplingRate = 16,
     quantizationLevels = 8,
-    duration = 2
+    duration = 2,
+    customFunction = null
   } = params;
 
   const points = [];
   const labels = [];
   const originalSignal = [];
+
+  // Compilar función personalizada o usar seno por defecto
+  let messageFunc;
+  try {
+    messageFunc = customFunction ? compileFunction(customFunction) : null;
+  } catch {
+    messageFunc = null;
+  }
 
   // Número total de puntos para visualización suave
   const totalPoints = 400;
@@ -29,14 +39,18 @@ export const generatePCM = (params = {}) => {
     const t = (i / totalPoints) * duration;
     labels.push(t.toFixed(3));
 
-    // Señal original (senoidal)
-    const analogValue = Math.sin(2 * Math.PI * messageFreq * t);
+    // Señal original - usa función personalizada o seno
+    const analogValue = messageFunc
+      ? messageFunc(t * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * t);
     originalSignal.push(analogValue);
 
     // Determinar en qué muestra estamos
     const sampleIndex = Math.floor(i / pointsPerSample);
     const sampleTime = (sampleIndex / samplingRate);
-    const sampleValue = Math.sin(2 * Math.PI * messageFreq * sampleTime);
+    const sampleValue = messageFunc
+      ? messageFunc(sampleTime * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * sampleTime);
 
     // Cuantización: mapear al nivel más cercano
     const normalizedValue = (sampleValue + 1) / 2; // 0 a 1
@@ -64,12 +78,21 @@ export const generateDM = (params = {}) => {
     messageFreq = 1,
     samplingRate = 32,
     stepSize = 0.2,
-    duration = 2
+    duration = 2,
+    customFunction = null
   } = params;
 
   const points = [];
   const labels = [];
   const originalSignal = [];
+
+  // Compilar función personalizada o usar seno por defecto
+  let messageFunc;
+  try {
+    messageFunc = customFunction ? compileFunction(customFunction) : null;
+  } catch {
+    messageFunc = null;
+  }
 
   // Número total de puntos para visualización
   const totalPoints = 400;
@@ -82,7 +105,9 @@ export const generateDM = (params = {}) => {
 
   for (let i = 0; i < totalSamples; i++) {
     const sampleTime = i / samplingRate;
-    const analogValue = Math.sin(2 * Math.PI * messageFreq * sampleTime);
+    const analogValue = messageFunc
+      ? messageFunc(sampleTime * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * sampleTime);
 
     // Delta Modulation: comparar con predicción
     if (analogValue > predictedValue) {
@@ -101,8 +126,10 @@ export const generateDM = (params = {}) => {
     const t = (i / totalPoints) * duration;
     labels.push(t.toFixed(3));
 
-    // Señal original (senoidal)
-    const analogValue = Math.sin(2 * Math.PI * messageFreq * t);
+    // Señal original - usa función personalizada o seno
+    const analogValue = messageFunc
+      ? messageFunc(t * messageFreq)
+      : Math.sin(2 * Math.PI * messageFreq * t);
     originalSignal.push(analogValue);
 
     // Señal reconstruida (escalonada)
