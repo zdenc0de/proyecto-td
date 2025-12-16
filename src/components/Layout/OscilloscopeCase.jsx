@@ -7,7 +7,7 @@ const OscilloscopeCase = ({ children, title = "LABORATORIO DE TRANSMISIÓN" }) =
       <div className="w-full max-w-7xl bg-osci-bg border border-gray-800 rounded-lg shadow-2xl overflow-hidden">
 
         {/* Barra superior */}
-        <div className="bg-gradient-to-b from-gray-800 to-gray-900 px-4 py-4 border-b border-gray-700">
+        <div className="bg-linear-to-b from-gray-800 to-gray-900 px-4 py-4 border-b border-gray-700">
           <h1 className="text-osci-text text-xl font-bold tracking-wider uppercase text-center">
             {title}
           </h1>
