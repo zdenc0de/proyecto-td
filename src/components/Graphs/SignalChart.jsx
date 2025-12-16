@@ -52,14 +52,15 @@ const SignalChart = ({
 
   if (showMessage && messageSignal?.length > 0) {
     datasets.push({
-      label: 'Señal Mensaje',
+      label: 'Señal Original',
       data: messageSignal,
       borderColor: '#f59e0b',
       backgroundColor: 'transparent',
-      borderWidth: 1,
-      tension: 0.3,
+      borderWidth: 1.5,
+      tension: 0.4,
       pointRadius: 0,
-      borderDash: [4, 4],
+      borderDash: [5, 3],
+      stepped: false, // Siempre suave para la señal original
     });
   }
 
@@ -115,7 +116,7 @@ const SignalChart = ({
     },
     plugins: {
       legend: {
-        display: showMessage || showCarrier,
+        display: datasets.length > 1,
         position: 'top',
         align: 'end',
         labels: {

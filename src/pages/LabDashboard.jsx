@@ -384,9 +384,9 @@ const LabDashboard = () => {
                 <SignalChart
                   dataPoints={signal.points}
                   labels={signal.labels}
-                  messageSignal={isAnalogAnalog ? signal.messageSignal : null}
+                  messageSignal={(isAnalogAnalog || isDigitalAnalog) ? signal.messageSignal : null}
                   carrierSignal={isAnalogAnalog ? signal.carrierSignal : null}
-                  showMessage={showMessage && isAnalogAnalog}
+                  showMessage={(showMessage && isAnalogAnalog) || isDigitalAnalog}
                   showCarrier={showCarrier && isAnalogAnalog}
                   yMin={yMin}
                   yMax={yMax}
