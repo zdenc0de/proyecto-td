@@ -83,7 +83,7 @@ const LabDashboard = () => {
   const { yMin, yMax } = getYLimits();
 
   return (
-    <OscilloscopeCase title="SIMULADOR DE TRANSMISIÓN DE DATOS">
+    <OscilloscopeCase title="PROYECTO TRANSMISIÓN DE DATOS">
       {/* Panel de Control */}
       <div className="w-full lg:w-1/3 flex flex-col gap-3">
 
@@ -127,7 +127,7 @@ const LabDashboard = () => {
         </div>
 
         {/* Controles según categoría */}
-        <div className="bg-osci-panel p-3 rounded border border-gray-700 space-y-3 max-h-[300px] overflow-y-auto">
+        <div className="bg-osci-panel p-3 rounded border border-gray-700 space-y-3 max-h-[350px] overflow-y-auto">
           <label className="block text-gray-500 text-[10px] uppercase tracking-wider">
             Parámetros
           </label>
@@ -368,7 +368,7 @@ const LabDashboard = () => {
 
       {/* Panel de Visualización */}
       <div className="w-full lg:w-2/3 flex flex-col gap-3">
-        <div className="relative h-72 lg:h-[400px]">
+        <div className="relative h-80 lg:h-[500px]">
           <div className="absolute top-2 left-3 z-20 flex items-center gap-2">
             <span className="text-[10px] text-gray-500 uppercase tracking-wider">
               {selectedTechnique}
