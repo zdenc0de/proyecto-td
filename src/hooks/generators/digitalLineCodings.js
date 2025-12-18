@@ -1,6 +1,6 @@
 /**
  * Generadores de señales para categoría: Señal Digital / Dato Digital
- * Técnicas: NRZ-L, NRZ-I, AMI, HDB3, Manchester, Manchester Diferencial, B8ZS
+ * Técnicas: NRZ-L, NRZ-I, AMI, Pseudoternario, HDB3, Manchester, Manchester Diferencial, B8ZS
  */
 
 const SAMPLES_PER_BIT = 50;
@@ -96,6 +96,36 @@ export const generateAMI = (binaryString) => {
     let level;
     if (bit === 1) {
       lastPulse = -lastPulse; // Alternar polaridad
+      level = lastPulse;
+    } else {
+      level = 0;
+    }
+    for (let j = 0; j < SAMPLES_PER_BIT; j++) {
+      points.push(level);
+      labels.push((bitIndex + j / SAMPLES_PER_BIT).toFixed(2));
+    }
+  });
+
+  return { labels, points };
+};
+
+/**
+ * Pseudoternario
+ * 0 = alterna entre +V y -V
+ * 1 = nivel cero
+ */
+export const generatePseudoternario = (binaryString) => {
+  const bits = parseBinaryString(binaryString);
+  if (bits.length === 0) return { labels: [], points: [] };
+
+  const points = [];
+  const labels = [];
+  let lastPulse = -1; // Empezamos para que el primer 0 sea positivo
+
+  bits.forEach((bit, bitIndex) => {
+    let level;
+    if (bit === 0) {
+      lastPulse = -lastPulse; // Alternar polaridad para 0
       level = lastPulse;
     } else {
       level = 0;
@@ -229,8 +259,8 @@ export const generateB8ZS = (binaryString) => {
 
 /**
  * Manchester
- * 1 = Transición de bajo a alto (↑) en medio del bit
- * 0 = Transición de alto a bajo (↓) en medio del bit
+ * 1 = Transición de bajo a alto en medio del bit
+ * 0 = Transición de alto a bajo en medio del bit
  */
 export const generateManchester = (binaryString) => {
   const bits = parseBinaryString(binaryString);
@@ -294,9 +324,7 @@ export const generateManchesterDiff = (binaryString) => {
   return { labels, points };
 };
 
-/**
- * Generador principal para codificaciones de línea digital
- */
+// Generador principal para codificación
 export const generateDigitalLineCode = (technique, binaryString) => {
   switch (technique) {
     case 'NRZ-L':
@@ -305,6 +333,8 @@ export const generateDigitalLineCode = (technique, binaryString) => {
       return generateNRZI(binaryString);
     case 'AMI':
       return generateAMI(binaryString);
+    case 'PSEUDOTERNARIO':
+      return generatePseudoternario(binaryString);
     case 'HDB3':
       return generateHDB3(binaryString);
     case 'B8ZS':
