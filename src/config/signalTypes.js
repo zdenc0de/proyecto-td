@@ -23,7 +23,7 @@ export const SIGNAL_CATEGORIES = {
     id: 'digital_digital',
     name: 'Señal Digital / Dato Digital',
     description: 'Codificación de línea para datos digitales',
-    techniques: ['NRZ-L', 'NRZ-I', 'RZ', 'AMI', 'HDB3', 'MANCHESTER', 'MANCHESTER_DIFF', 'B8ZS']
+    techniques: ['NRZ-L', 'NRZ-I', 'AMI', 'HDB3', 'MANCHESTER', 'MANCHESTER_DIFF', 'B8ZS']
   }
 };
 
@@ -121,14 +121,6 @@ export const TECHNIQUES = {
     fullName: 'Sin Retorno a Cero - Invertido',
     category: 'digital_digital',
     description: 'Transición en 1, sin cambio en 0',
-    params: ['binaryInput']
-  },
-  RZ: {
-    id: 'RZ',
-    name: 'RZ (Return to Zero)',
-    fullName: 'Retorno a Cero',
-    category: 'digital_digital',
-    description: 'La señal retorna a cero en la mitad de cada bit',
     params: ['binaryInput']
   },
   AMI: {

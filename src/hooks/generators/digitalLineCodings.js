@@ -1,6 +1,6 @@
 /**
  * Generadores de señales para categoría: Señal Digital / Dato Digital
- * Técnicas: NRZ-L, NRZ-I, RZ, AMI, HDB3, Manchester, Manchester Diferencial, B8ZS
+ * Técnicas: NRZ-L, NRZ-I, AMI, HDB3, Manchester, Manchester Diferencial, B8ZS
  */
 
 const SAMPLES_PER_BIT = 50;
@@ -78,34 +78,6 @@ export const generateNRZI = (binaryString) => {
   return { labels, points };
 };
 
-/**
- * RZ (Return to Zero)
- * 1 = Pulso positivo en primera mitad, cero en segunda mitad
- * 0 = Cero todo el tiempo
- */
-export const generateRZ = (binaryString) => {
-  const bits = parseBinaryString(binaryString);
-  if (bits.length === 0) return { labels: [], points: [] };
-
-  const points = [];
-  const labels = [];
-  const half = Math.floor(SAMPLES_PER_BIT / 2);
-
-  bits.forEach((bit, bitIndex) => {
-    for (let j = 0; j < SAMPLES_PER_BIT; j++) {
-      let level;
-      if (bit === 1) {
-        level = j < half ? 1 : 0; // Primera mitad alto, segunda mitad cero
-      } else {
-        level = 0; // Todo cero para bit 0
-      }
-      points.push(level);
-      labels.push((bitIndex + j / SAMPLES_PER_BIT).toFixed(2));
-    }
-  });
-
-  return { labels, points };
-};
 
 /**
  * AMI (Alternate Mark Inversion)
@@ -331,8 +303,6 @@ export const generateDigitalLineCode = (technique, binaryString) => {
       return generateNRZL(binaryString);
     case 'NRZ-I':
       return generateNRZI(binaryString);
-    case 'RZ':
-      return generateRZ(binaryString);
     case 'AMI':
       return generateAMI(binaryString);
     case 'HDB3':
