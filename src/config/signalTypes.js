@@ -61,7 +61,7 @@ export const TECHNIQUES = {
     name: 'ASK (Amplitude Shift Keying)',
     fullName: 'Modulación por Desplazamiento de Amplitud',
     category: 'analog_digital',
-    description: 'La amplitud cambia según el bit (1 = amplitud alta, 0 = amplitud baja)',
+    description: 'La amplitud cambia según el bit',
     params: ['frequency', 'binaryInput']
   },
   FSK: {
