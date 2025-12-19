@@ -1,0 +1,413 @@
+================================================================================
+                    DOCUMENTACION DEL PROYECTO
+                    TRANSMISION DE DATOS
+================================================================================
+
+Proyecto desarrollado en React + Vite para visualizar tecnicas de modulacion
+y codificacion de senales en transmision de datos.
+
+================================================================================
+1. DESCRIPCION GENERAL
+================================================================================
+
+Este proyecto es una aplicacion web interactiva que permite visualizar y
+comprender las diferentes tecnicas de modulacion y codificacion utilizadas
+en transmision de datos. La interfaz simula un osciloscopio digital donde
+se pueden observar las senales generadas.
+
+Tecnologias utilizadas:
+- React 18
+- Vite (bundler)
+- Chart.js (graficos)
+- Tailwind CSS (estilos)
+
+================================================================================
+2. ESTRUCTURA DEL PROYECTO
+================================================================================
+
+proyectotd/
+|-- src/
+|   |-- components/
+|   |   |-- Graphs/
+|   |   |   |-- SignalChart.jsx        # Grafico de lineas para senales
+|   |   |   |-- ConstellationChart.jsx # Diagrama de constelacion QAM
+|   |   |-- Layout/
+|   |       |-- OscilloscopeCase.jsx   # Contenedor estilo osciloscopio
+|   |       |-- ScreenGrid.jsx         # Cuadricula de pantalla
+|   |
+|   |-- config/
+|   |   |-- signalTypes.js             # Configuracion de categorias y tecnicas
+|   |
+|   |-- hooks/
+|   |   |-- useSignal.js               # Hook principal para generar senales
+|   |   |-- generators/
+|   |       |-- analogSignals.js       # Generadores AM, FM, PM
+|   |       |-- digitalModulations.js  # Generadores ASK, FSK, PSK, QAM
+|   |       |-- digitalLineCodings.js  # Codificaciones de linea
+|   |       |-- analogToDigital.js     # Conversores PCM, DM
+|   |       |-- index.js               # Exportaciones
+|   |
+|   |-- pages/
+|   |   |-- LabDashboard.jsx           # Pagina principal del laboratorio
+|   |
+|   |-- utils/
+|   |   |-- functionParser.js          # Parser de funciones matematicas
+|   |
+|   |-- App.jsx                        # Componente raiz
+|   |-- main.jsx                       # Punto de entrada
+|   |-- index.css                      # Estilos globales
+|
+|-- public/
+|-- package.json
+|-- vite.config.js
+
+================================================================================
+3. CATEGORIAS DE SENALES
+================================================================================
+
+El proyecto organiza las tecnicas en 4 categorias principales:
+
+3.1 SENAL ANALOGICA / DATO ANALOGICO
+------------------------------------
+Modulacion de senales analogicas con datos analogicos.
+
+Tecnicas:
+- AM (Amplitude Modulation)
+- FM (Frequency Modulation)
+- PM (Phase Modulation)
+
+3.2 SENAL ANALOGICA / DATO DIGITAL
+----------------------------------
+Modulacion de senales analogicas con datos digitales.
+
+Tecnicas:
+- ASK (Amplitude Shift Keying)
+- FSK (Frequency Shift Keying)
+- PSK (Phase Shift Keying)
+- QAM (Quadrature Amplitude Modulation)
+
+3.3 SENAL DIGITAL / DATO ANALOGICO
+----------------------------------
+Conversion de senales analogicas a digitales.
+
+Tecnicas:
+- PCM (Pulse Code Modulation)
+- DM (Delta Modulation)
+
+3.4 SENAL DIGITAL / DATO DIGITAL
+--------------------------------
+Codificacion de linea para datos digitales.
+
+Tecnicas:
+- NRZ-L (Non-Return to Zero Level)
+- NRZ-I (Non-Return to Zero Inverted)
+- AMI (Alternate Mark Inversion)
+- Pseudoternario
+- Manchester
+- Manchester Diferencial
+- HDB3 (High Density Bipolar 3)
+- B8ZS (Bipolar 8-Zero Substitution)
+
+================================================================================
+4. DETALLE DE TECNICAS IMPLEMENTADAS
+================================================================================
+
+4.1 MODULACION ANALOGICA (AM, FM, PM)
+-------------------------------------
+
+Archivo: src/hooks/generators/analogSignals.js
+
+AM (Amplitude Modulation):
+- Formula: s(t) = [1 + m * m(t)] * cos(2*PI*fc*t)
+- Parametros fijos internos:
+  * Frecuencia portadora (fc): 10 Hz
+  * Indice de modulacion (m): 0.5
+- La funcion m(t) se evalua directamente con t (compatible con GeoGebra)
+
+FM (Frequency Modulation):
+- Formula: s(t) = cos(2*PI*fc*t + B * integral(m(t)))
+- La desviacion de frecuencia es ajustable via slider
+
+PM (Phase Modulation):
+- Formula: s(t) = cos(2*PI*fc*t + Dphi * m(t))
+- La desviacion de fase es ajustable via slider
+
+Entrada de funcion personalizada:
+- Sintaxis compatible con GeoGebra
+- Funciones soportadas: sin(t), cos(t)
+- Constantes: PI
+- Operadores: + - * / ^
+- Variable: t (tiempo)
+- Ejemplos: sin(t), cos(2*t), sin(2*PI*t), 2*sin(3*t)
+
+
+4.2 MODULACION DIGITAL (ASK, FSK, PSK, QAM)
+-------------------------------------------
+
+Archivo: src/hooks/generators/digitalModulations.js
+
+ASK (Amplitude Shift Keying):
+- Bit 1: Amplitud alta (configurable 1-5V)
+- Bit 0: Amplitud baja (0V)
+- Formula: s(t) = A * sin(2*PI*f*t)
+
+FSK (Frequency Shift Keying):
+- Bit 0: Frecuencia baja (f0, configurable 0-5 Hz)
+- Bit 1: Frecuencia alta (f1, configurable 0-5 Hz)
+- Formula: s(t) = sin(2*PI*f*t) donde f = f0 o f1
+
+PSK (Phase Shift Keying) - BPSK:
+- Bit 1: Fase 0 grados
+- Bit 0: Fase 180 grados
+- Formula: s(t) = sin(2*PI*f*t + fase)
+
+QAM (Quadrature Amplitude Modulation):
+- Muestra diagrama de constelacion (no onda)
+- Tipos soportados: 4-QAM, 16-QAM, 64-QAM
+- Formula: s(t) = I*cos(2*PI*f*t) + Q*sin(2*PI*f*t)
+- Constelaciones:
+  * 4-QAM:  2 bits/simbolo, cuadricula 2x2, niveles [-1, 1]
+  * 16-QAM: 4 bits/simbolo, cuadricula 4x4, niveles [-3, -1, 1, 3]
+  * 64-QAM: 6 bits/simbolo, cuadricula 8x8, niveles [-7, -5, -3, -1, 1, 3, 5, 7]
+
+
+4.3 CONVERSION ANALOGICO-DIGITAL (PCM, DM)
+------------------------------------------
+
+Archivo: src/hooks/generators/analogToDigital.js
+
+PCM (Pulse Code Modulation):
+- Muestreo de senal analogica
+- Cuantizacion a niveles discretos
+- Codificacion binaria
+- Parametros:
+  * Funcion de entrada m(t)
+  * Frecuencia de la senal
+  * Tasa de muestreo (8-32 Hz)
+  * Niveles de cuantizacion (4-16)
+
+DM (Delta Modulation):
+- Codifica diferencia entre muestras
+- Parametros:
+  * Funcion de entrada m(t)
+  * Frecuencia de la senal
+  * Tasa de muestreo (16-64 Hz)
+  * Tamano del paso delta (0.05-0.5)
+
+
+4.4 CODIFICACION DE LINEA
+-------------------------
+
+Archivo: src/hooks/generators/digitalLineCodings.js
+
+NRZ-L (Non-Return to Zero Level):
+- Bit 1: Nivel alto (+V)
+- Bit 0: Nivel bajo (-V)
+- Sin transiciones dentro del bit
+
+NRZ-I (Non-Return to Zero Inverted):
+- Bit 1: Transicion al inicio
+- Bit 0: Sin transicion
+- Codificacion diferencial
+
+AMI (Alternate Mark Inversion):
+- Bit 1: Alterna entre +V y -V
+- Bit 0: Nivel 0V
+- Bipolar
+
+Pseudoternario:
+- Bit 0: Alterna entre +V y -V
+- Bit 1: Nivel 0V
+- Inverso de AMI
+
+Manchester:
+- Transicion a mitad del bit
+- Bit 1: Bajo a alto
+- Bit 0: Alto a bajo
+
+Manchester Diferencial:
+- Transicion al inicio para bit 0
+- Sin transicion al inicio para bit 1
+- Siempre hay transicion a mitad del bit
+
+HDB3 (High Density Bipolar 3):
+- Basado en AMI
+- Sustituye 4 ceros consecutivos
+- Patron: 000V (si pulsos impares) o B00V (si pulsos pares)
+
+B8ZS (Bipolar 8-Zero Substitution):
+- Basado en AMI
+- Sustituye 8 ceros consecutivos
+- Patron: 000VB0VB
+
+================================================================================
+5. PARSER DE FUNCIONES MATEMATICAS
+================================================================================
+
+Archivo: src/utils/functionParser.js
+
+Permite al usuario ingresar funciones matematicas personalizadas
+para la senal de mensaje m(t).
+
+Funciones permitidas:
+- sin, cos, tan
+- abs, sqrt, exp, log
+- pow, floor, ceil, round
+
+Constantes permitidas:
+- PI (3.14159...)
+- E (2.71828...)
+
+Operadores:
+- Suma: +
+- Resta: -
+- Multiplicacion: *
+- Division: /
+- Potencia: ^
+
+Variable:
+- t: representa el tiempo
+
+La funcion compileFunction() parsea la expresion y retorna una funcion
+JavaScript evaluable. El parser soporta precedencia de operadores y
+parentesis anidados.
+
+================================================================================
+6. COMPONENTES DE VISUALIZACION
+================================================================================
+
+6.1 SignalChart (src/components/Graphs/SignalChart.jsx)
+-------------------------------------------------------
+Grafico de lineas usando Chart.js para mostrar senales en el dominio del tiempo.
+
+Props:
+- dataPoints: Array de valores Y
+- labels: Array de etiquetas X (tiempo)
+- messageSignal: Senal original (opcional)
+- showMessage: Mostrar senal original
+- yMin, yMax: Limites del eje Y
+- title: Titulo del grafico
+- stepped: Si es true, muestra escalones (para senales digitales)
+
+
+6.2 ConstellationChart (src/components/Graphs/ConstellationChart.jsx)
+---------------------------------------------------------------------
+Diagrama de constelacion para QAM usando grafico Scatter.
+
+Props:
+- constellationPoints: Todos los puntos posibles de la constelacion
+- transmittedSymbols: Simbolos transmitidos (resaltados)
+- qamOrder: Orden de QAM (4, 16 o 64)
+- levels: Niveles de amplitud I/Q
+
+Caracteristicas:
+- Ejes I (In-Phase) y Q (Quadrature) centrados
+- Circulos grises: puntos de la constelacion
+- Circulos verdes: simbolos transmitidos
+- Tooltip con informacion del simbolo
+
+================================================================================
+7. HOOK PRINCIPAL (useSignal)
+================================================================================
+
+Archivo: src/hooks/useSignal.js
+
+Hook de React que unifica la generacion de senales para todas las categorias.
+
+Uso:
+const signal = useSignal(category, technique, params);
+
+Parametros:
+- category: analog_analog, analog_digital, digital_digital, digital_analog
+- technique: AM, FM, ASK, NRZ-L, etc.
+- params: Objeto con parametros especificos de cada tecnica
+
+Retorna:
+- labels: Etiquetas del eje X
+- points: Valores del eje Y
+- messageSignal: Senal original (para PCM/DM)
+- isConstellation: true si es QAM (para mostrar constelacion)
+- constellationPoints: Puntos de constelacion (QAM)
+- transmittedSymbols: Simbolos transmitidos (QAM)
+
+================================================================================
+8. CONFIGURACION DE TECNICAS
+================================================================================
+
+Archivo: src/config/signalTypes.js
+
+Define las categorias, tecnicas y parametros por defecto.
+
+SIGNAL_CATEGORIES:
+- Estructura de categorias con ID, nombre, descripcion y tecnicas
+
+TECHNIQUES:
+- Definicion de cada tecnica con:
+  * id: Identificador unico
+  * name: Nombre corto
+  * fullName: Nombre completo
+  * category: Categoria a la que pertenece
+  * description: Descripcion breve
+  * params: Parametros requeridos
+
+DEFAULT_ANALOG_PARAMS:
+- frequencyDeviation: 5 Hz (para FM)
+- phaseDeviation: PI/2 radianes (para PM)
+- duration: 2 segundos
+- samplesPerSecond: 500
+
+================================================================================
+9. PAGINA PRINCIPAL (LabDashboard)
+================================================================================
+
+Archivo: src/pages/LabDashboard.jsx
+
+Componente principal que integra todos los elementos:
+
+Estados:
+- selectedCategory: Categoria seleccionada
+- selectedTechnique: Tecnica seleccionada
+- binaryInput: Entrada binaria (max 16 digitos)
+- analogParams: Parametros de las tecnicas
+- customFunction: Funcion personalizada m(t)
+- functionError: Error de validacion de funcion
+
+Secciones:
+1. Selector de categoria
+2. Selector de tecnica
+3. Panel de parametros (dinamico segun tecnica)
+4. Area de visualizacion (SignalChart o ConstellationChart)
+5. Indicador de bits (para tecnicas digitales)
+
+================================================================================
+10. EJECUCION DEL PROYECTO
+================================================================================
+
+Requisitos:
+- Node.js 18+
+- npm o yarn
+
+Instalacion:
+npm install
+
+Desarrollo:
+npm run dev
+
+Compilacion:
+npm run build
+
+El proyecto se ejecuta en http://localhost:5173 por defecto.
+
+================================================================================
+11. NOTAS IMPORTANTES
+================================================================================
+
+- La entrada binaria esta limitada a 16 digitos para optimizar rendimiento
+- Las funciones m(t) son compatibles con sintaxis de GeoGebra
+- QAM muestra diagrama de constelacion, no forma de onda
+- Los valores de I y Q en QAM estan normalizados entre -1 y 1
+- Las codificaciones de linea usan valores +1, 0, -1 para representar voltajes
+
+================================================================================
+                         FIN DE LA DOCUMENTACION
+================================================================================

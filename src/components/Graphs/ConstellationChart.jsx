@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -22,6 +22,55 @@ const ConstellationChart = ({
   levels = [-3, -1, 1, 3]
 }) => {
   const maxLevel = Math.max(...levels.map(Math.abs));
+
+  // Calcular los radios únicos para los anillos (distancias desde el origen)
+  const ringRadii = useMemo(() => {
+    const distances = new Set();
+    constellationPoints.forEach(p => {
+      const distance = Math.sqrt(p.I * p.I + p.Q * p.Q);
+      // Redondear para evitar duplicados por errores de punto flotante
+      distances.add(Math.round(distance * 1000) / 1000);
+    });
+    return Array.from(distances).sort((a, b) => a - b);
+  }, [constellationPoints]);
+
+  // Plugin personalizado para dibujar los anillos concéntricos
+  const ringsPlugin = useMemo(() => ({
+    id: 'constellationRings',
+    beforeDatasetsDraw: (chart) => {
+      const { ctx, scales } = chart;
+      const xScale = scales.x;
+      const yScale = scales.y;
+
+      // Centro del gráfico (origen 0,0)
+      const centerX = xScale.getPixelForValue(0);
+      const centerY = yScale.getPixelForValue(0);
+
+      // Calcular factor de escala (píxeles por unidad)
+      const pixelsPerUnitX = Math.abs(xScale.getPixelForValue(1) - xScale.getPixelForValue(0));
+      const pixelsPerUnitY = Math.abs(yScale.getPixelForValue(1) - yScale.getPixelForValue(0));
+      const pixelsPerUnit = Math.min(pixelsPerUnitX, pixelsPerUnitY);
+
+      ctx.save();
+
+      // Dibujar cada anillo
+      ringRadii.forEach((radius, index) => {
+        if (radius === 0) return; // No dibujar anillo en el origen
+
+        const pixelRadius = radius * pixelsPerUnit;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, pixelRadius, 0, 2 * Math.PI);
+        ctx.strokeStyle = `rgba(34, 197, 94, ${0.3 - index * 0.05})`; // Verde con opacidad decreciente
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]); // Línea punteada
+        ctx.stroke();
+        ctx.setLineDash([]); // Resetear
+      });
+
+      ctx.restore();
+    }
+  }), [ringRadii]);
 
   // Puntos de la constelación (todos los posibles) - círculos grises
   const gridPoints = constellationPoints.map(p => ({
@@ -152,7 +201,7 @@ const ConstellationChart = ({
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex-1">
-        <Scatter data={data} options={options} />
+        <Scatter data={data} options={options} plugins={[ringsPlugin]} />
       </div>
       {/* Información de símbolos transmitidos */}
       {transmittedSymbols.length > 0 && (

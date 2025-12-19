@@ -108,7 +108,7 @@ const LabDashboard = () => {
   const { yMin, yMax } = getYLimits();
 
   return (
-    <OscilloscopeCase title="PROYECTO TRANSMISIÓN DE DATOS">
+    <OscilloscopeCase title="Simulador de Técnicas de Modulación y Codificación">
       {/* Panel de Control */}
       <div className="w-full lg:w-1/3 flex flex-col gap-3">
 
