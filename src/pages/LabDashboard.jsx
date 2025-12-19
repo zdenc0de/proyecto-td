@@ -36,11 +36,18 @@ const LabDashboard = () => {
   const [functionError, setFunctionError] = useState(null);
 
   // Memoizar parámetros para el hook
-  const signalParams = useMemo(() => ({
-    ...analogParams,
-    binaryInput,
-    customFunction: functionError ? null : customFunction
-  }), [analogParams, binaryInput, customFunction, functionError]);
+  const signalParams = useMemo(() => {
+    let params = {
+      ...analogParams,
+      binaryInput,
+      customFunction: functionError ? null : customFunction
+    };
+    // Para ASK, asegurar que amplitudeHigh sea entero y entre 1 y 5
+    if (selectedCategory === 'analog_digital' && selectedTechnique === 'ASK') {
+      params.amplitudeHigh = Math.max(1, Math.min(5, Math.round(Number(analogParams.amplitudeHigh) || 1)));
+    }
+    return params;
+  }, [analogParams, binaryInput, customFunction, functionError, selectedCategory, selectedTechnique]);
 
   // Hook unificado para generar señales
   const signal = useSignal(selectedCategory, selectedTechnique, signalParams);
@@ -219,6 +226,32 @@ const LabDashboard = () => {
             </>
           )}
 
+          {/* Controles para ASK */}
+          {isAnalogDigital && selectedTechnique === 'ASK' && (
+            <>
+              <div>
+                <div className="flex justify-between text-[10px] text-gray-500 mb-1">
+                  <span>Amplitud para bit 1</span>
+                  <span className="text-osci-primary">{analogParams.amplitudeHigh || 1} V</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value={analogParams.amplitudeHigh || 1}
+                  onChange={e => handleParamChange('amplitudeHigh', e.target.value)}
+                  className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
+                />
+                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                  {[1,2,3,4,5].map(v => (
+                    <span key={v}>{v}V</span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+          
           {/* Controles para FSK */}
           {isAnalogDigital && selectedTechnique === 'FSK' && (
             <>
