@@ -161,11 +161,18 @@ const LabDashboard = () => {
               <input
                 type="text"
                 value={binaryInput}
-                onChange={(e) => setBinaryInput(e.target.value.replace(/[^01]/g, ''))}
+                maxLength={16}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^01]/g, '');
+                  if (val.length <= 16) setBinaryInput(val);
+                }}
                 placeholder="Ej: 10110010"
                 className="w-full bg-osci-screen text-osci-primary font-mono font-bold tracking-widest border border-gray-600 rounded px-2 py-1.5 text-center focus:outline-none focus:border-osci-primary"
+                disabled={binaryInput.length >= 16 && document.activeElement !== null && document.activeElement.value === binaryInput}
               />
-              <p className="text-[9px] text-gray-600 mt-1 text-center">Solo 0s y 1s</p>
+              <p className="text-[9px] text-gray-600 mt-1 text-center">
+                Solo 0s y 1s. Máximo 16 dígitos.
+              </p>
             </div>
           )}
 
