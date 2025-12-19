@@ -74,17 +74,24 @@ export const generatePCM = (params = {}) => {
  * Muestra la señal reconstruida vs la original
  */
 export const generateDM = (params = {}) => {
-  const {
+  let {
     messageFreq = 1,
     samplingRate = 32,
+    samplingInterval,
     stepSize = 0.2,
     duration = 2,
     customFunction = null
   } = params;
 
+  // Si se provee samplingInterval, calcular samplingRate
+  if (typeof samplingInterval === 'number' && samplingInterval > 0) {
+    samplingRate = 1 / samplingInterval;
+  }
+
   const points = [];
   const labels = [];
   const originalSignal = [];
+  const digitalBits = [];
 
   // Compilar función personalizada o usar seno por defecto
   let messageFunc;
@@ -99,7 +106,7 @@ export const generateDM = (params = {}) => {
   const totalSamples = Math.floor(duration * samplingRate);
   const pointsPerSample = Math.floor(totalPoints / totalSamples);
 
-  // Primero calculamos todos los valores de delta modulation
+  // Primero calculamos todos los valores de delta modulation y los bits
   const deltaValues = [];
   let predictedValue = 0;
 
@@ -112,8 +119,10 @@ export const generateDM = (params = {}) => {
     // Delta Modulation: comparar con predicción
     if (analogValue > predictedValue) {
       predictedValue += stepSize;
+      digitalBits.push(1);
     } else {
       predictedValue -= stepSize;
+      digitalBits.push(0);
     }
 
     // Limitar predicción al rango
@@ -141,7 +150,8 @@ export const generateDM = (params = {}) => {
     labels,
     points,
     originalSignal,
-    messageSignal: originalSignal // Para mostrar la señal original superpuesta
+    messageSignal: originalSignal, // Para mostrar la señal original superpuesta
+    digitalBits // Para mostrar la señal digital binaria
   };
 };
 

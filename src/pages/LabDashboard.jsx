@@ -369,7 +369,7 @@ const LabDashboard = () => {
             <>
               {/* Función personalizada para DM */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal original:</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -384,9 +384,6 @@ const LabDashboard = () => {
                 {functionError && (
                   <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
                 )}
-                <p className="text-[9px] text-gray-600 mt-1">
-                  Usa: sin, cos, tan, abs, sqrt, exp, PI, t
-                </p>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {PRESET_FUNCTIONS.slice(0, 3).map((preset) => (
                     <button
@@ -402,31 +399,19 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frecuencia de la señal</span>
-                  <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
+                  <span>Intervalo de muestreo</span>
+                  <span className="text-osci-primary">{analogParams.samplingInterval || 0.0625} s</span>
                 </div>
                 <input
-                  type="range" min="0.5" max="3" step="0.5"
-                  value={analogParams.messageFreq}
-                  onChange={(e) => handleParamChange('messageFreq', e.target.value)}
-                  className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-secondary"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Tasa de muestreo</span>
-                  <span className="text-osci-primary">{analogParams.samplingRate} Hz</span>
-                </div>
-                <input
-                  type="range" min="16" max="64" step="8"
-                  value={analogParams.samplingRate}
-                  onChange={(e) => handleParamChange('samplingRate', e.target.value)}
+                  type="range" min="0.05" max="0.1" step="0.01"
+                  value={analogParams.samplingInterval || 0.0625}
+                  onChange={(e) => handleParamChange('samplingInterval', e.target.value)}
                   className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
                 />
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Tamaño Paso (δ)</span>
+                  <span>Tamaño de Delta (δ)</span>
                   <span className="text-osci-primary">{analogParams.stepSize}</span>
                 </div>
                 <input
@@ -503,6 +488,27 @@ const LabDashboard = () => {
                   className={`w-5 h-5 flex items-center justify-center text-xs font-mono rounded ${
                     bit === '1'
                       ? 'bg-osci-primary/20 text-osci-primary'
+                      : 'bg-gray-700/50 text-gray-500'
+                  }`}
+                >
+                  {bit}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Señal digital binaria resultante para DM */}
+        {isDigitalAnalog && selectedTechnique === 'DM' && Array.isArray(signal.digitalBits) && signal.digitalBits.length > 0 && (
+          <div className="bg-osci-panel p-2 rounded border border-osci-primary mt-2">
+            <div className="flex items-center gap-1 flex-wrap">
+              <span className="text-[10px] text-osci-primary mr-2">Señal digital (DM):</span>
+              {signal.digitalBits.map((bit, idx) => (
+                <span
+                  key={idx}
+                  className={`w-5 h-5 flex items-center justify-center text-xs font-mono rounded ${
+                    bit === 1 || bit === '1'
+                      ? 'bg-osci-primary/30 text-osci-primary'
                       : 'bg-gray-700/50 text-gray-500'
                   }`}
                 >

@@ -103,7 +103,7 @@ export const TECHNIQUES = {
     name: 'DM (Delta Modulation)',
     fullName: 'Modulación Delta',
     category: 'digital_analog',
-    description: 'Codifica la diferencia entre muestras consecutivas',
+    description: 'Genera un 1 si la función escalera sube, o un 0 en cualquier otro caso',
     params: ['samplingRate', 'stepSize', 'messageFreq']
   },
 
