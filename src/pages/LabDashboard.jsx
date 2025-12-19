@@ -124,7 +124,7 @@ const LabDashboard = () => {
           </select>
         </div>
 
-        {/* Selector de Técnica */}
+        {/* Selector de técnica */}
         <div className="bg-osci-panel p-3 rounded border border-gray-700">
           <label className="block text-gray-500 text-[10px] uppercase tracking-wider mb-2">
             Técnica
@@ -154,7 +154,7 @@ const LabDashboard = () => {
           {/* Input binario para técnicas que lo requieren */}
           {needsBinaryInput && (
             <div>
-              <label className="block text-gray-500 text-[10px] mb-1">Dato Binario</label>
+              <label className="block text-gray-500 text-[10px] mb-1">Dato binario</label>
               <input
                 type="text"
                 value={binaryInput}
@@ -171,7 +171,7 @@ const LabDashboard = () => {
             <>
               {/* Función personalizada del mensaje */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función del Mensaje m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función del mensaje m(t)</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -206,7 +206,7 @@ const LabDashboard = () => {
 
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Portadora</span>
+                  <span>Frecuencia de la portadora</span>
                   <span className="text-osci-primary">{analogParams.carrierFreq} Hz</span>
                 </div>
                 <input
@@ -219,7 +219,7 @@ const LabDashboard = () => {
 
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Mensaje (referencia)</span>
+                  <span>Frecuencia del mensaje</span>
                   <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
                 </div>
                 <input
@@ -233,7 +233,7 @@ const LabDashboard = () => {
               {selectedTechnique === 'AM' && (
                 <div>
                   <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Índice Modulación (m)</span>
+                    <span>Índice de modulación (m)</span>
                     <span className="text-osci-primary">{analogParams.modulationIndex}</span>
                   </div>
                   <input
@@ -248,7 +248,7 @@ const LabDashboard = () => {
               {selectedTechnique === 'FM' && (
                 <div>
                   <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Desviación Frec. (Δf)</span>
+                    <span>Desviación de frecuencia (Δf)</span>
                     <span className="text-osci-primary">{analogParams.frequencyDeviation} Hz</span>
                   </div>
                   <input
@@ -263,7 +263,7 @@ const LabDashboard = () => {
               {selectedTechnique === 'PM' && (
                 <div>
                   <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Desviación Fase (Δφ)</span>
+                    <span>Desviación de fase (Δφ)</span>
                     <span className="text-osci-primary">{analogParams.phaseDeviation.toFixed(2)} rad</span>
                   </div>
                   <input
@@ -302,7 +302,7 @@ const LabDashboard = () => {
             <>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. para 0</span>
+                  <span>Frecuencia para 0</span>
                   <span className="text-osci-secondary">{analogParams.freq0} Hz</span>
                 </div>
                 <input
@@ -314,7 +314,7 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. para 1</span>
+                  <span>Frecuencia para 1</span>
                   <span className="text-osci-primary">{analogParams.freq1} Hz</span>
                 </div>
                 <input
@@ -332,7 +332,7 @@ const LabDashboard = () => {
             <>
               {/* Función personalizada para PCM */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la Señal m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal m(t)</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -365,7 +365,7 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Señal (referencia)</span>
+                  <span>Frecuencia de la señal</span>
                   <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
                 </div>
                 <input
@@ -377,7 +377,7 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Tasa Muestreo</span>
+                  <span>Tasa de muestreo</span>
                   <span className="text-osci-primary">{analogParams.samplingRate} Hz</span>
                 </div>
                 <input
@@ -407,7 +407,7 @@ const LabDashboard = () => {
             <>
               {/* Función personalizada para DM */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la Señal m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal m(t)</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -440,7 +440,7 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frec. Señal (referencia)</span>
+                  <span>Frecuencia de la señal</span>
                   <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
                 </div>
                 <input
@@ -452,7 +452,7 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Tasa Muestreo</span>
+                  <span>Tasa de muestreo</span>
                   <span className="text-osci-primary">{analogParams.samplingRate} Hz</span>
                 </div>
                 <input

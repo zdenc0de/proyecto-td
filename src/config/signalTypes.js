@@ -135,7 +135,6 @@ export const TECHNIQUES = {
   PSEUDOTERNARIO: {
       id: 'PSEUDOTERNARIO',
       name: 'Pseudoternario',
-      fullName: 'Codificación Pseudoternaria',
       category: 'digital_digital',
       description: 'Los 0s alternan entre +V y -V, los 1s son 0V',
       params: ['binaryInput']
@@ -151,7 +150,6 @@ export const TECHNIQUES = {
   MANCHESTER: {
     id: 'MANCHESTER',
     name: 'Manchester',
-    fullName: 'Codificación Manchester',
     category: 'digital_digital',
     description: 'Transición a la mitad del intervalo: de bajo a alto para 1 y de alto a bajo para 0',
     params: ['binaryInput']
@@ -159,7 +157,6 @@ export const TECHNIQUES = {
   MANCHESTER_DIFF: {
     id: 'MANCHESTER_DIFF',
     name: 'Manchester Diferencial',
-    fullName: 'Codificación Manchester Diferencial',
     category: 'digital_digital',
     description: 'Transición al inicio para 0, sin transición al inicio para 1',
     params: ['binaryInput']
