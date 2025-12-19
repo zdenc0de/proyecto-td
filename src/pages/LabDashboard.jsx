@@ -165,14 +165,14 @@ const LabDashboard = () => {
           {/* Controles para señales analógicas (AM, FM, PM) */}
           {isAnalogAnalog && (
             <>
-              {/* Función personalizada del mensaje */}
+              {/* Función de la señal */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función del mensaje m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal m(t)</label>
                 <input
                   type="text"
                   value={customFunction}
                   onChange={(e) => handleFunctionChange(e.target.value)}
-                  placeholder="Ej: sin(2*PI*t)"
+                  placeholder="Ej: sin(t)"
                   className={`w-full bg-osci-screen text-osci-secondary font-mono text-sm border rounded px-2 py-1.5 focus:outline-none ${
                     functionError
                       ? 'border-red-500 focus:border-red-500'
@@ -182,9 +182,7 @@ const LabDashboard = () => {
                 {functionError && (
                   <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
                 )}
-                <p className="text-[9px] text-gray-600 mt-1">
-                  Usa: sin, cos, tan, abs, sqrt, exp, PI, t
-                </p>
+
                 {/* Funciones predefinidas */}
                 <div className="flex flex-wrap gap-1 mt-2">
                   {PRESET_FUNCTIONS.map((preset) => (
@@ -192,43 +190,32 @@ const LabDashboard = () => {
                       key={preset.name}
                       onClick={() => applyPreset(preset.expression)}
                       title={preset.description}
-                      className="text-[9px] px-1.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-osci-secondary rounded transition-colors"
+                      className="text-[9px] px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-osci-secondary rounded transition-colors"
                     >
                       {preset.name}
                     </button>
                   ))}
                 </div>
+
+                {/* Instrucciones de sintaxis */}
+                <div className="mt-3 p-2 bg-gray-800/50 rounded border border-gray-700">
+                  <p className="text-[9px] text-gray-400 font-bold mb-1">Sintaxis (compatible con GeoGebra):</p>
+                  <div className="text-[9px] text-gray-500 space-y-0.5">
+                    <p><span className="text-osci-secondary">Funciones:</span> sin(t), cos(t)</p>
+                    <p><span className="text-osci-secondary">Constantes:</span> PI</p>
+                    <p><span className="text-osci-secondary">Operadores:</span> + - * / ^</p>
+                    <p><span className="text-osci-secondary">Variable:</span> t (tiempo)</p>
+                  </div>
+                  <p className="text-[9px] text-gray-400 mt-2 font-bold">Ejemplos:</p>
+                  <div className="text-[9px] text-gray-500 font-mono space-y-0.5">
+                    <p>sin(t)</p>
+                    <p>cos(2*t)</p>
+                    <p>sin(2*PI*t)</p>
+                    <p>sin(t) + cos(t)</p>
+                    <p>2*sin(3*t)</p>
+                  </div>
+                </div>
               </div>
-
-              {selectedTechnique === 'FM' && (
-                <div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Desviación de frecuencia (Δf)</span>
-                    <span className="text-osci-primary">{analogParams.frequencyDeviation} Hz</span>
-                  </div>
-                  <input
-                    type="range" min="1" max="20" step="1"
-                    value={analogParams.frequencyDeviation}
-                    onChange={(e) => handleParamChange('frequencyDeviation', e.target.value)}
-                    className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
-                  />
-                </div>
-              )}
-
-              {selectedTechnique === 'PM' && (
-                <div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Desviación de fase (Δφ)</span>
-                    <span className="text-osci-primary">{analogParams.phaseDeviation.toFixed(2)} rad</span>
-                  </div>
-                  <input
-                    type="range" min="0.5" max="3.14" step="0.1"
-                    value={analogParams.phaseDeviation}
-                    onChange={(e) => handleParamChange('phaseDeviation', e.target.value)}
-                    className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
-                  />
-                </div>
-              )}
             </>
           )}
 

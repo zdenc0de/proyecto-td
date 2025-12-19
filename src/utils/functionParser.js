@@ -306,12 +306,9 @@ export const validateExpression = (expression) => {
 };
 
 /**
- * Funciones predefinidas comunes
+ * Funciones predefinidas - Solo Seno y Coseno
  */
 export const PRESET_FUNCTIONS = [
-  { name: 'Seno', expression: 'sin(2*PI*t)', description: 'Onda senoidal básica' },
-  { name: 'Coseno', expression: 'cos(2*PI*t)', description: 'Onda cosenoidal básica' },
-  { name: 'Seno + Coseno', expression: 'sin(2*PI*t) + 0.5*cos(4*PI*t)', description: 'Suma de armónicos' },
-  { name: 'Triangular', expression: '2*abs(2*(t - floor(t + 0.5))) - 1', description: 'Aproximación triangular' },
-  { name: 'Rampa', expression: '2*(t - floor(t)) - 1', description: 'Onda diente de sierra' },
+  { name: 'Seno', expression: 'sin(t)', description: 'sin(t)' },
+  { name: 'Coseno', expression: 'cos(t)', description: 'cos(t)' },
 ];

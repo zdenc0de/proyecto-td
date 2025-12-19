@@ -1,18 +1,23 @@
 /**
  * Generadores de señales para categoría: Señal Analógica / Dato Analógico
  * Técnicas: AM, FM, PM
+ *
+ * La función m(t) se evalúa directamente con t para ser compatible con GeoGebra
  */
 import { compileFunction } from '../../utils/functionParser';
 
+// Valores fijos internos
+const CARRIER_FREQ = 10;      // Hz - Frecuencia de la portadora
+const MODULATION_INDEX = 0.5; // Índice de modulación AM
+const FREQUENCY_DEVIATION = 5; // Hz - Desviación de frecuencia FM
+const PHASE_DEVIATION = Math.PI / 2; // Radianes - Desviación de fase PM
+
 /**
  * Genera señal AM (Amplitude Modulation)
- * Fórmula: s(t) = Ac * [1 + m * m(t)] * cos(2π * fc * t)
+ * Fórmula: s(t) = [1 + m * m(t)] * cos(2π * fc * t)
  */
 export const generateAM = (params) => {
   const {
-    carrierFreq = 10,
-    messageFreq = 1,
-    modulationIndex = 0.5,
     duration = 2,
     samplesPerSecond = 500,
     customFunction = null
@@ -21,8 +26,6 @@ export const generateAM = (params) => {
   const totalSamples = Math.floor(duration * samplesPerSecond);
   const points = [];
   const labels = [];
-  const messageSignal = [];
-  const carrierSignal = [];
 
   // Compilar función personalizada o usar seno por defecto
   let messageFunc;
@@ -36,34 +39,23 @@ export const generateAM = (params) => {
     const t = i / samplesPerSecond;
     labels.push(t.toFixed(3));
 
-    // Señal mensaje (moduladora) - usa función personalizada o seno
-    const m_t = messageFunc
-      ? messageFunc(t * messageFreq)
-      : Math.sin(2 * Math.PI * messageFreq * t);
-    messageSignal.push(m_t);
-
-    // Señal portadora
-    const carrier = Math.cos(2 * Math.PI * carrierFreq * t);
-    carrierSignal.push(carrier);
+    // Señal mensaje - evaluada directamente con t (compatible con GeoGebra)
+    const m_t = messageFunc ? messageFunc(t) : Math.sin(t);
 
     // Señal AM modulada
-    const y = (1 + modulationIndex * m_t) * Math.cos(2 * Math.PI * carrierFreq * t);
+    const y = (1 + MODULATION_INDEX * m_t) * Math.cos(2 * Math.PI * CARRIER_FREQ * t);
     points.push(y);
   }
 
-  return { labels, points, messageSignal, carrierSignal };
+  return { labels, points };
 };
 
 /**
  * Genera señal FM (Frequency Modulation)
- * Fórmula: s(t) = Ac * cos(2π * fc * t + β * sin(2π * fm * t))
- * donde β = Δf / fm (índice de modulación FM)
+ * Fórmula: s(t) = cos(2π * fc * t + β * integral(m(t)))
  */
 export const generateFM = (params) => {
   const {
-    carrierFreq = 10,
-    messageFreq = 1,
-    frequencyDeviation = 5,
     duration = 2,
     samplesPerSecond = 500,
     customFunction = null
@@ -72,11 +64,6 @@ export const generateFM = (params) => {
   const totalSamples = Math.floor(duration * samplesPerSecond);
   const points = [];
   const labels = [];
-  const messageSignal = [];
-  const carrierSignal = [];
-
-  // Índice de modulación FM
-  const beta = frequencyDeviation / messageFreq;
 
   // Compilar función personalizada o usar seno por defecto
   let messageFunc;
@@ -94,36 +81,26 @@ export const generateFM = (params) => {
     const t = i / samplesPerSecond;
     labels.push(t.toFixed(3));
 
-    // Señal mensaje
-    const m_t = messageFunc
-      ? messageFunc(t * messageFreq)
-      : Math.sin(2 * Math.PI * messageFreq * t);
-    messageSignal.push(m_t);
-
-    // Señal portadora (referencia)
-    const carrier = Math.cos(2 * Math.PI * carrierFreq * t);
-    carrierSignal.push(carrier);
+    // Señal mensaje - evaluada directamente con t (compatible con GeoGebra)
+    const m_t = messageFunc ? messageFunc(t) : Math.sin(t);
 
     // Acumular fase (integral numérica de m(t))
-    phaseAccum += m_t * dt * messageFreq;
+    phaseAccum += m_t * dt;
 
-    // Señal FM modulada - la fase instantánea cambia con la integral de m(t)
-    const y = Math.cos(2 * Math.PI * carrierFreq * t + beta * 2 * Math.PI * phaseAccum);
+    // Señal FM modulada
+    const y = Math.cos(2 * Math.PI * CARRIER_FREQ * t + FREQUENCY_DEVIATION * 2 * Math.PI * phaseAccum);
     points.push(y);
   }
 
-  return { labels, points, messageSignal, carrierSignal };
+  return { labels, points };
 };
 
 /**
  * Genera señal PM (Phase Modulation)
- * Fórmula: s(t) = Ac * cos(2π * fc * t + Δφ * m(t))
+ * Fórmula: s(t) = cos(2π * fc * t + Δφ * m(t))
  */
 export const generatePM = (params) => {
   const {
-    carrierFreq = 10,
-    messageFreq = 1,
-    phaseDeviation = Math.PI / 2,
     duration = 2,
     samplesPerSecond = 500,
     customFunction = null
@@ -132,8 +109,6 @@ export const generatePM = (params) => {
   const totalSamples = Math.floor(duration * samplesPerSecond);
   const points = [];
   const labels = [];
-  const messageSignal = [];
-  const carrierSignal = [];
 
   // Compilar función personalizada o usar seno por defecto
   let messageFunc;
@@ -147,22 +122,15 @@ export const generatePM = (params) => {
     const t = i / samplesPerSecond;
     labels.push(t.toFixed(3));
 
-    // Señal mensaje
-    const m_t = messageFunc
-      ? messageFunc(t * messageFreq)
-      : Math.sin(2 * Math.PI * messageFreq * t);
-    messageSignal.push(m_t);
+    // Señal mensaje - evaluada directamente con t (compatible con GeoGebra)
+    const m_t = messageFunc ? messageFunc(t) : Math.sin(t);
 
-    // Señal portadora (referencia)
-    const carrier = Math.cos(2 * Math.PI * carrierFreq * t);
-    carrierSignal.push(carrier);
-
-    // Señal PM modulada - la fase cambia directamente con m(t)
-    const y = Math.cos(2 * Math.PI * carrierFreq * t + phaseDeviation * m_t);
+    // Señal PM modulada
+    const y = Math.cos(2 * Math.PI * CARRIER_FREQ * t + PHASE_DEVIATION * m_t);
     points.push(y);
   }
 
-  return { labels, points, messageSignal, carrierSignal };
+  return { labels, points };
 };
 
 /**
@@ -177,6 +145,6 @@ export const generateAnalogSignal = (technique, params) => {
     case 'PM':
       return generatePM(params);
     default:
-      return { labels: [], points: [], messageSignal: [], carrierSignal: [] };
+      return { labels: [], points: [] };
   }
 };
