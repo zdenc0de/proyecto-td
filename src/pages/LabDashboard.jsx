@@ -31,10 +31,6 @@ const LabDashboard = () => {
     freq1: 3,
   });
 
-  // Estado para mostrar señales auxiliares
-  const [showMessage, setShowMessage] = useState(false);
-  const [showCarrier, setShowCarrier] = useState(false);
-
   // Estado para función personalizada del mensaje
   const [customFunction, setCustomFunction] = useState('sin(2*PI*t)');
   const [functionError, setFunctionError] = useState(null);
@@ -204,47 +200,6 @@ const LabDashboard = () => {
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frecuencia de la portadora</span>
-                  <span className="text-osci-primary">{analogParams.carrierFreq} Hz</span>
-                </div>
-                <input
-                  type="range" min="5" max="50" step="1"
-                  value={analogParams.carrierFreq}
-                  onChange={(e) => handleParamChange('carrierFreq', e.target.value)}
-                  className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
-                />
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frecuencia del mensaje</span>
-                  <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
-                </div>
-                <input
-                  type="range" min="0.5" max="5" step="0.5"
-                  value={analogParams.messageFreq}
-                  onChange={(e) => handleParamChange('messageFreq', e.target.value)}
-                  className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-secondary"
-                />
-              </div>
-
-              {selectedTechnique === 'AM' && (
-                <div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Índice de modulación (m)</span>
-                    <span className="text-osci-primary">{analogParams.modulationIndex}</span>
-                  </div>
-                  <input
-                    type="range" min="0.1" max="1" step="0.1"
-                    value={analogParams.modulationIndex}
-                    onChange={(e) => handleParamChange('modulationIndex', e.target.value)}
-                    className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
-                  />
-                </div>
-              )}
-
               {selectedTechnique === 'FM' && (
                 <div>
                   <div className="flex justify-between text-[10px] text-gray-500 mb-1">
@@ -274,26 +229,6 @@ const LabDashboard = () => {
                   />
                 </div>
               )}
-
-              {/* Checkboxes para señales auxiliares */}
-              <div className="flex gap-4 pt-1">
-                <label className="flex items-center gap-1.5 text-[10px] cursor-pointer">
-                  <input
-                    type="checkbox" checked={showMessage}
-                    onChange={(e) => setShowMessage(e.target.checked)}
-                    className="w-3 h-3 accent-osci-secondary"
-                  />
-                  <span className="text-gray-400">Mensaje</span>
-                </label>
-                <label className="flex items-center gap-1.5 text-[10px] cursor-pointer">
-                  <input
-                    type="checkbox" checked={showCarrier}
-                    onChange={(e) => setShowCarrier(e.target.checked)}
-                    className="w-3 h-3 accent-osci-secondary"
-                  />
-                  <span className="text-gray-400">Portadora</span>
-                </label>
-              </div>
             </>
           )}
 
@@ -504,10 +439,8 @@ const LabDashboard = () => {
                 <SignalChart
                   dataPoints={signal.points}
                   labels={signal.labels}
-                  messageSignal={(isAnalogAnalog || isDigitalAnalog) ? signal.messageSignal : null}
-                  carrierSignal={isAnalogAnalog ? signal.carrierSignal : null}
-                  showMessage={(showMessage && isAnalogAnalog) || isDigitalAnalog}
-                  showCarrier={showCarrier && isAnalogAnalog}
+                  messageSignal={isDigitalAnalog ? signal.messageSignal : null}
+                  showMessage={isDigitalAnalog}
                   yMin={yMin}
                   yMax={yMax}
                   title={`Señal ${selectedTechnique}`}
