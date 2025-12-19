@@ -330,7 +330,7 @@ const LabDashboard = () => {
             <>
               {/* Función personalizada para PCM */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal </label>
                 <input
                   type="text"
                   value={customFunction}

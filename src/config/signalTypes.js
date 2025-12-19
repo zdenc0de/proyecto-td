@@ -93,7 +93,7 @@ export const TECHNIQUES = {
   PCM: {
     id: 'PCM',
     name: 'PCM (Pulse Code Modulation)',
-    fullName: 'Modulación por Código de Pulsos',
+    fullName: 'Modulación por Codificación de Pulsos',
     category: 'digital_analog',
     description: 'Muestreo, cuantización y codificación de señal analógica',
     params: ['samplingRate', 'quantizationLevels', 'messageFreq']
