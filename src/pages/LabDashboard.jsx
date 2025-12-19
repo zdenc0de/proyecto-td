@@ -294,7 +294,7 @@ const LabDashboard = () => {
             <>
               {/* Función personalizada para PCM */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal </label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal original:</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -310,7 +310,6 @@ const LabDashboard = () => {
                   <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
                 )}
                 <p className="text-[9px] text-gray-600 mt-1">
-                  Usa: sin, cos, tan, abs, sqrt, exp, PI, t
                 </p>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {PRESET_FUNCTIONS.slice(0, 3).map((preset) => (
@@ -327,18 +326,6 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frecuencia de la señal</span>
-                  <span className="text-osci-secondary">{analogParams.messageFreq} Hz</span>
-                </div>
-                <input
-                  type="range" min="0.5" max="3" step="0.5"
-                  value={analogParams.messageFreq}
-                  onChange={(e) => handleParamChange('messageFreq', e.target.value)}
-                  className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-secondary"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between text-[10px] text-gray-500 mb-1">
                   <span>Tasa de muestreo</span>
                   <span className="text-osci-primary">{analogParams.samplingRate} Hz</span>
                 </div>
@@ -351,7 +338,7 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Niveles Cuant.</span>
+                  <span>Niveles de cuantización</span>
                   <span className="text-osci-primary">{analogParams.quantizationLevels}</span>
                 </div>
                 <input
