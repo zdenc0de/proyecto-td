@@ -8,9 +8,11 @@ const SAMPLES_PER_BIT = 50;
 /**
  * Parsea la cadena binaria y retorna array de bits válidos
  */
+const MAX_BITS = 16;
 const parseBinaryString = (binaryString) => {
   if (!binaryString) return [];
-  return binaryString.split('').filter(c => c === '0' || c === '1').map(Number);
+  // Filtrar solo 0 y 1, limitar a MAX_BITS
+  return binaryString.split('').filter(c => c === '0' || c === '1').slice(0, MAX_BITS).map(Number);
 };
 
 /**
