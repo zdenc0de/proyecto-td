@@ -18,7 +18,6 @@ export const useSignal = (category, technique, params = {}) => {
     reconstructed: []
   });
 
-  // Memoizar params para evitar re-renders innecesarios
   const paramsKey = useMemo(() => JSON.stringify(params), [params]);
 
   useEffect(() => {
@@ -26,22 +25,22 @@ export const useSignal = (category, technique, params = {}) => {
 
     switch (category) {
       case 'analog_analog':
-        // Señal Analógica / Dato Analógico: AM, FM, PM
+        // Señal Analógica / Dato Analógico
         result = generateAnalogSignal(technique, params);
         break;
 
       case 'analog_digital':
-        // Señal Analógica / Dato Digital: ASK, FSK, PSK, QAM
+        // Señal Analógica / Dato Digital
         result = generateDigitalModulation(technique, params.binaryInput, params);
         break;
 
       case 'digital_digital':
-        // Señal Digital / Dato Digital: NRZ, AMI, HDB3, Manchester, etc.
+        // Señal Digital / Dato Digital
         result = generateDigitalLineCode(technique, params.binaryInput);
         break;
 
       case 'digital_analog':
-        // Señal Digital / Dato Analógico: PCM, DM
+        // Señal Digital / Dato Analógico
         result = generateAnalogToDigital(technique, params);
         break;
 

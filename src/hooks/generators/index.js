@@ -5,5 +5,5 @@
 
 export { generateAnalogSignal, generateAM, generateFM, generatePM } from './analogSignals';
 export { generateDigitalModulation, generateASK, generateFSK, generatePSK, generateQAM } from './digitalModulations';
-export { generateDigitalLineCode, generateNRZL, generateNRZI, generateRZ, generateAMI, generateHDB3, generateB8ZS, generateManchester, generateManchesterDiff } from './digitalLineCodings';
+export { generateDigitalLineCode, generateNRZL, generateNRZI, generateAMI, generatePseudoternario, generateHDB3, generateB8ZS, generateManchester, generateManchesterDiff } from './digitalLineCodings';
 export { generateAnalogToDigital, generatePCM, generateDM } from './analogToDigital';

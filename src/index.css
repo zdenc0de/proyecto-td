@@ -3,7 +3,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* --- COLORES --- */
+  /* colores */
   --color-osci-bg: #0D1117;
   --color-osci-screen: #020408;
   --color-osci-grid: #1f2937;
@@ -12,10 +12,10 @@
   --color-osci-text: #e5e7eb;
   --color-osci-panel: #161b22;
 
-  /* --- FUENTES --- */
+  /* fuente */
   --font-mono: "Fira Code", monospace;
 
-  /* --- SOMBRAS (GLOW) --- */
+  /* sombras */
   --shadow-glow: 0 0 10px rgba(34, 197, 94, 0.5);
   --shadow-glow-blue: 0 0 10px rgba(14, 165, 233, 0.5);
 }

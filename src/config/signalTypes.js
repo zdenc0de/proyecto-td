@@ -22,13 +22,14 @@ export const SIGNAL_CATEGORIES = {
   DIGITAL_DIGITAL: {
     id: 'digital_digital',
     name: 'Señal Digital / Dato Digital',
-    description: 'Codificación de línea para datos digitales',
-    techniques: ['NRZ-L', 'NRZ-I', 'RZ', 'AMI', 'HDB3', 'MANCHESTER', 'MANCHESTER_DIFF', 'B8ZS']
+    description: 'Codificación para datos digitales',
+    techniques: ['NRZ-L', 'NRZ-I', 'AMI', 'PSEUDOTERNARIO', 'HDB3', 'MANCHESTER', 'MANCHESTER_DIFF', 'B8ZS']
+    // ...
   }
 };
 
 export const TECHNIQUES = {
-  // === SEÑAL ANALÓGICA / DATO ANALÓGICO ===
+  // SEÑAL ANALÓGICA / DATO ANALÓGICO
   AM: {
     id: 'AM',
     name: 'AM (Amplitude Modulation)',
@@ -54,7 +55,7 @@ export const TECHNIQUES = {
     params: ['carrierFreq', 'phaseDeviation', 'messageFreq']
   },
 
-  // === SEÑAL ANALÓGICA / DATO DIGITAL ===
+  // SEÑAL ANALÓGICA / DATO DIGITAL
   ASK: {
     id: 'ASK',
     name: 'ASK (Amplitude Shift Keying)',
@@ -84,11 +85,11 @@ export const TECHNIQUES = {
     name: 'QAM (Quadrature Amplitude Modulation)',
     fullName: 'Modulación de Amplitud en Cuadratura',
     category: 'analog_digital',
-    description: 'Combina ASK y PSK para transmitir más bits por símbolo',
+    description: 'Combina ASK y PSK',
     params: ['frequency', 'binaryInput']
   },
 
-  // === SEÑAL DIGITAL / DATO ANALÓGICO ===
+  // SEÑAL DIGITAL / DATO ANALÓGICO
   PCM: {
     id: 'PCM',
     name: 'PCM (Pulse Code Modulation)',
@@ -106,13 +107,13 @@ export const TECHNIQUES = {
     params: ['samplingRate', 'stepSize', 'messageFreq']
   },
 
-  // === SEÑAL DIGITAL / DATO DIGITAL ===
+  // SEÑAL DIGITAL / DATO DIGITAL
   'NRZ-L': {
     id: 'NRZ-L',
     name: 'NRZ-L (Non-Return to Zero Level)',
     fullName: 'Sin Retorno a Cero - Nivel',
     category: 'digital_digital',
-    description: 'Nivel alto para 1, nivel bajo para 0. No retorna a cero.',
+    description: 'Nivel alto para 1, nivel bajo para 0.',
     params: ['binaryInput']
   },
   'NRZ-I': {
@@ -120,15 +121,7 @@ export const TECHNIQUES = {
     name: 'NRZ-I (Non-Return to Zero Inverted)',
     fullName: 'Sin Retorno a Cero - Invertido',
     category: 'digital_digital',
-    description: 'Transición en 1, sin cambio en 0',
-    params: ['binaryInput']
-  },
-  RZ: {
-    id: 'RZ',
-    name: 'RZ (Return to Zero)',
-    fullName: 'Retorno a Cero',
-    category: 'digital_digital',
-    description: 'La señal retorna a cero en la mitad de cada bit',
+    description: 'Transición en 1, sin transición en 0',
     params: ['binaryInput']
   },
   AMI: {
@@ -139,26 +132,31 @@ export const TECHNIQUES = {
     description: 'Los 1s alternan entre +V y -V, los 0s son 0V',
     params: ['binaryInput']
   },
+  PSEUDOTERNARIO: {
+      id: 'PSEUDOTERNARIO',
+      name: 'Pseudoternario',
+      category: 'digital_digital',
+      description: 'Los 0s alternan entre +V y -V, los 1s son 0V',
+      params: ['binaryInput']
+  },
   HDB3: {
     id: 'HDB3',
     name: 'HDB3 (High Density Bipolar 3)',
     fullName: 'Bipolar de Alta Densidad 3',
     category: 'digital_digital',
-    description: 'Como AMI pero sustituye secuencias de 4 ceros',
+    description: 'Funciona como AMI pero sustituye secuencias de 4 ceros por 000V si el número de pulsos distintos de 0 desde la última sustitución es impar o por B00V si es par',
     params: ['binaryInput']
   },
   MANCHESTER: {
     id: 'MANCHESTER',
     name: 'Manchester',
-    fullName: 'Codificación Manchester',
     category: 'digital_digital',
-    description: 'Transición en medio del bit: bajo→alto para 1, alto→bajo para 0',
+    description: 'Transición a la mitad del intervalo: de bajo a alto para 1 y de alto a bajo para 0',
     params: ['binaryInput']
   },
   MANCHESTER_DIFF: {
     id: 'MANCHESTER_DIFF',
     name: 'Manchester Diferencial',
-    fullName: 'Codificación Manchester Diferencial',
     category: 'digital_digital',
     description: 'Transición al inicio para 0, sin transición al inicio para 1',
     params: ['binaryInput']
@@ -168,7 +166,7 @@ export const TECHNIQUES = {
     name: 'B8ZS (Bipolar 8-Zero Substitution)',
     fullName: 'Sustitución Bipolar de 8 Ceros',
     category: 'digital_digital',
-    description: 'Como AMI pero sustituye secuencias de 8 ceros',
+    description: 'Funciona como AMI pero sustituye secuencias de 8 ceros por 000VB0VB',
     params: ['binaryInput']
   }
 };
