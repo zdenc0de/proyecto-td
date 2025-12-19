@@ -91,96 +91,33 @@ export const generatePSK = (binaryString, params = {}) => {
 
 /**
  * QAM (Quadrature Amplitude Modulation)
- * Retorna diagrama de constelación con puntos I/Q
- *
- * Soporta: 4-QAM, 16-QAM, 64-QAM
  */
 
-// Genera los niveles de amplitud para la constelación QAM
-const getQAMLevels = (order) => {
-  switch (order) {
-    case 4:  return [-1, 1];                         // 2x2
-    case 16: return [-3, -1, 1, 3];                  // 4x4
-    case 64: return [-7, -5, -3, -1, 1, 3, 5, 7];    // 8x8
-    default: return [-1, 1];
-  }
-};
-
-// Obtiene bits por símbolo según el orden QAM
-const getBitsPerSymbol = (order) => {
-  switch (order) {
-    case 4:  return 2;
-    case 16: return 4;
-    case 64: return 6;
-    default: return 2;
-  }
-};
-
 export const generateQAM = (binaryString, params = {}) => {
+  // 4-QAM (QPSK)
   const bits = parseBinaryString(binaryString);
-  const { qamOrder = 16 } = params;
+  if (bits.length === 0) return { labels: [], points: [] };
 
-  const levels = getQAMLevels(qamOrder);
-  const bitsPerSymbol = getBitsPerSymbol(qamOrder);
-  const size = levels.length; // Tamaño de cada dimensión
-
-  // Generar todos los puntos de la constelación (para mostrar la cuadrícula)
-  const constellationPoints = [];
-  for (let i = 0; i < size; i++) {
-    for (let q = 0; q < size; q++) {
-      constellationPoints.push({
-        I: levels[i],
-        Q: levels[q],
-        label: null // Punto de referencia, sin etiqueta de bits
-      });
+  const { frequency = DEFAULT_FREQUENCY } = params;
+  const points = [];
+  const labels = [];
+  // 2 bits por símbolo: 00, 01, 10, 11
+  for (let i = 0; i < bits.length; i += 2) {
+    const bitPair = [bits[i] || 0, bits[i + 1] || 0];
+    // Mapear a fase: 00=0°, 01=90°, 11=180°, 10=270°
+    let phase = 0;
+    if (bitPair[0] === 0 && bitPair[1] === 1) phase = Math.PI / 2;
+    else if (bitPair[0] === 1 && bitPair[1] === 1) phase = Math.PI;
+    else if (bitPair[0] === 1 && bitPair[1] === 0) phase = 3 * Math.PI / 2;
+    // else 00: phase = 0
+    for (let j = 0; j < SAMPLES_PER_BIT * 2; j++) {
+      const t = j / (SAMPLES_PER_BIT * 2);
+      const y = Math.sin(2 * Math.PI * frequency * t + phase);
+      points.push(y);
+      labels.push(((i / 2) + t).toFixed(2));
     }
   }
-
-  // Generar los símbolos transmitidos basados en la entrada binaria
-  const transmittedSymbols = [];
-
-  if (bits.length > 0) {
-    for (let i = 0; i < bits.length; i += bitsPerSymbol) {
-      // Extraer bits para este símbolo
-      let symbolBits = '';
-      for (let b = 0; b < bitsPerSymbol; b++) {
-        const bitIndex = i + b;
-        const bit = bitIndex < bits.length ? bits[bitIndex] : 0;
-        symbolBits += bit;
-      }
-
-      // Dividir bits entre I y Q
-      const halfBits = bitsPerSymbol / 2;
-      const iBits = symbolBits.substring(0, halfBits);
-      const qBits = symbolBits.substring(halfBits);
-
-      const iIndex = parseInt(iBits, 2);
-      const qIndex = parseInt(qBits, 2);
-
-      // Obtener valores I y Q
-      const I = levels[iIndex] !== undefined ? levels[iIndex] : levels[0];
-      const Q = levels[qIndex] !== undefined ? levels[qIndex] : levels[0];
-
-      transmittedSymbols.push({
-        I,
-        Q,
-        bits: symbolBits,
-        index: Math.floor(i / bitsPerSymbol)
-      });
-    }
-  }
-
-  // Retornar datos para el diagrama de constelación
-  return {
-    isConstellation: true,
-    qamOrder,
-    levels,
-    constellationPoints,
-    transmittedSymbols,
-    // Para compatibilidad con el gráfico existente (no se usará)
-    labels: [],
-    points: []
-  };
+  return { labels, points };
 };
 
 /**

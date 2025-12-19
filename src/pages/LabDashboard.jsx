@@ -30,8 +30,8 @@ const LabDashboard = () => {
     // Parámetros para FSK
     freq0: 1,
     freq1: 3,
-    // Parámetros para QAM
-    qamOrder: 16,
+    // Parámetro fijo para QAM (solo 4-QAM)
+    qamOrder: 4,
   });
 
   // Estado para función personalizada del mensaje
@@ -184,7 +184,7 @@ const LabDashboard = () => {
             <>
               {/* Función de la señal */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal original:</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal moduladora:</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -285,39 +285,6 @@ const LabDashboard = () => {
                   onChange={(e) => handleParamChange('freq1', e.target.value)}
                   className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
                 />
-              </div>
-            </>
-          )}
-
-          {/* Controles para QAM */}
-          {isAnalogDigital && selectedTechnique === 'QAM' && (
-            <>
-              <div>
-                <label className="block text-gray-500 text-[10px] mb-2">Tipo de QAM</label>
-                <div className="flex gap-2">
-                  {[4, 16, 64].map((order) => (
-                    <button
-                      key={order}
-                      onClick={() => handleParamChange('qamOrder', order)}
-                      className={`flex-1 py-2 px-3 rounded text-xs font-bold transition-colors ${
-                        analogParams.qamOrder === order
-                          ? 'bg-osci-primary text-black'
-                          : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-                      }`}
-                    >
-                      {order}-QAM
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-2 p-2 bg-gray-800/50 rounded border border-gray-700">
-                  <p className="text-[9px] text-gray-400">
-                    <span className="text-osci-secondary font-bold">{analogParams.qamOrder || 16}-QAM:</span>
-                    {' '}
-                    {analogParams.qamOrder === 4 && '2 bits/símbolo, constelación 2×2'}
-                    {(analogParams.qamOrder === 16 || !analogParams.qamOrder) && '4 bits/símbolo, constelación 4×4'}
-                    {analogParams.qamOrder === 64 && '6 bits/símbolo, constelación 8×8'}
-                  </p>
-                </div>
               </div>
             </>
           )}
