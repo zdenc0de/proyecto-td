@@ -309,8 +309,6 @@ const LabDashboard = () => {
                 {functionError && (
                   <p className="text-[9px] text-red-400 mt-1">{functionError}</p>
                 )}
-                <p className="text-[9px] text-gray-600 mt-1">
-                </p>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {PRESET_FUNCTIONS.slice(0, 3).map((preset) => (
                     <button
@@ -326,15 +324,20 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Tasa de muestreo</span>
-                  <span className="text-osci-primary">{analogParams.samplingRate} Hz</span>
+                  <span>Intervalo de muestreo</span>
+                  <span className="text-osci-primary">{analogParams.samplingInterval ? Number(analogParams.samplingInterval).toFixed(5) : 0.0625} s</span>
                 </div>
                 <input
-                  type="range" min="8" max="32" step="4"
-                  value={analogParams.samplingRate}
-                  onChange={(e) => handleParamChange('samplingRate', e.target.value)}
+                  type="range" min="0.1" max="0.5" step="0.1"
+                  value={analogParams.samplingInterval || 0.0625}
+                  onChange={(e) => handleParamChange('samplingInterval', e.target.value)}
                   className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
                 />
+                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                  <span>0.01</span>
+                  <span>0.05</span>
+                  <span>0.1</span>
+                </div>
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
@@ -342,7 +345,7 @@ const LabDashboard = () => {
                   <span className="text-osci-primary">{analogParams.quantizationLevels}</span>
                 </div>
                 <input
-                  type="range" min="4" max="16" step="2"
+                  type="range" min="4" max="16" step="4"
                   value={analogParams.quantizationLevels}
                   onChange={(e) => handleParamChange('quantizationLevels', e.target.value)}
                   className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
@@ -350,6 +353,26 @@ const LabDashboard = () => {
               </div>
             </>
           )}
+        {/* Señal digital binaria resultante para PCM */}
+        {isDigitalAnalog && selectedTechnique === 'PCM' && Array.isArray(signal.digitalBits) && signal.digitalBits.length > 0 && (
+          <div className="bg-osci-panel p-2 rounded border border-osci-primary mt-2">
+            <div className="flex items-center gap-1 flex-wrap">
+              <span className="text-[10px] text-osci-primary mr-2">Señal digital (PCM):</span>
+              {signal.digitalBits.map((bit, idx) => (
+                <span
+                  key={idx}
+                  className={`w-5 h-5 flex items-center justify-center text-xs font-mono rounded ${
+                    bit === 1 || bit === '1'
+                      ? 'bg-osci-primary/30 text-osci-primary'
+                      : 'bg-gray-700/50 text-gray-500'
+                  }`}
+                >
+                  {bit}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
           {/* Controles para DM */}
           {isDigitalAnalog && selectedTechnique === 'DM' && (

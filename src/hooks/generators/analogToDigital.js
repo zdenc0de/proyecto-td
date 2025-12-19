@@ -9,17 +9,24 @@ import { compileFunction } from '../../utils/functionParser';
  * Muestreo, cuantización y codificación de señal analógica
  */
 export const generatePCM = (params = {}) => {
-  const {
+  let {
     messageFreq = 1,
     samplingRate = 16,
+    samplingInterval,
     quantizationLevels = 8,
     duration = 2,
     customFunction = null
   } = params;
 
+  // Si se provee samplingInterval, calcular samplingRate
+  if (typeof samplingInterval === 'number' && samplingInterval > 0) {
+    samplingRate = 1 / samplingInterval;
+  }
+
   const points = [];
   const labels = [];
   const originalSignal = [];
+  const digitalBits = [];
 
   // Compilar función personalizada o usar seno por defecto
   let messageFunc;
@@ -33,6 +40,10 @@ export const generatePCM = (params = {}) => {
   const totalPoints = 400;
   const totalSamples = Math.floor(duration * samplingRate);
   const pointsPerSample = Math.floor(totalPoints / totalSamples);
+
+  // Para la codificación binaria PCM
+  const sampleBits = Math.ceil(Math.log2(quantizationLevels));
+  const binaryArray = [];
 
   // Generar señal original y cuantizada sincronizadas
   for (let i = 0; i < totalPoints; i++) {
@@ -58,13 +69,24 @@ export const generatePCM = (params = {}) => {
     const quantizedValue = (levelIndex / (quantizationLevels - 1)) * 2 - 1; // -1 a 1
 
     points.push(quantizedValue);
+
+    // Solo una vez por muestra (no por cada punto de visualización)
+    if (i % pointsPerSample === 0 && sampleIndex < totalSamples) {
+      // Convertir el nivel a binario de sampleBits bits
+      let bin = levelIndex.toString(2).padStart(sampleBits, '0');
+      for (let b of bin) binaryArray.push(b);
+    }
   }
+
+  // El arreglo digitalBits es el binario PCM resultante
+  for (let b of binaryArray) digitalBits.push(b);
 
   return {
     labels,
     points,
     originalSignal,
-    messageSignal: originalSignal // Para mostrar la señal original superpuesta
+    messageSignal: originalSignal, // Para mostrar la señal original superpuesta
+    digitalBits // Para mostrar la señal digital binaria PCM
   };
 };
 
