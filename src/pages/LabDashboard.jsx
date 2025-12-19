@@ -224,11 +224,11 @@ const LabDashboard = () => {
             <>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frecuencia para 0</span>
+                  <span>Frecuencia para bit 0</span>
                   <span className="text-osci-secondary">{analogParams.freq0} Hz</span>
                 </div>
                 <input
-                  type="range" min="1" max="5" step="0.5"
+                  type="range" min="0" max="5"
                   value={analogParams.freq0}
                   onChange={(e) => handleParamChange('freq0', e.target.value)}
                   className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-secondary"
@@ -236,11 +236,11 @@ const LabDashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                  <span>Frecuencia para 1</span>
+                  <span>Frecuencia para bit 1</span>
                   <span className="text-osci-primary">{analogParams.freq1} Hz</span>
                 </div>
                 <input
-                  type="range" min="2" max="8" step="0.5"
+                  type="range" min="0" max="5"
                   value={analogParams.freq1}
                   onChange={(e) => handleParamChange('freq1', e.target.value)}
                   className="w-full h-1 bg-gray-700 rounded appearance-none cursor-pointer accent-osci-primary"
