@@ -184,7 +184,7 @@ const LabDashboard = () => {
             <>
               {/* Función de la señal */}
               <div>
-                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal m(t)</label>
+                <label className="block text-gray-500 text-[10px] mb-1">Función de la señal original:</label>
                 <input
                   type="text"
                   value={customFunction}
@@ -216,20 +216,17 @@ const LabDashboard = () => {
 
                 {/* Instrucciones de sintaxis */}
                 <div className="mt-3 p-2 bg-gray-800/50 rounded border border-gray-700">
-                  <p className="text-[9px] text-gray-400 font-bold mb-1">Sintaxis (compatible con GeoGebra):</p>
+                  <p className="text-[9px] text-gray-400 font-bold mb-1">Sintaxis:</p>
                   <div className="text-[9px] text-gray-500 space-y-0.5">
                     <p><span className="text-osci-secondary">Funciones:</span> sin(t), cos(t)</p>
                     <p><span className="text-osci-secondary">Constantes:</span> PI</p>
-                    <p><span className="text-osci-secondary">Operadores:</span> + - * / ^</p>
                     <p><span className="text-osci-secondary">Variable:</span> t (tiempo)</p>
                   </div>
                   <p className="text-[9px] text-gray-400 mt-2 font-bold">Ejemplos:</p>
                   <div className="text-[9px] text-gray-500 font-mono space-y-0.5">
-                    <p>sin(t)</p>
-                    <p>cos(2*t)</p>
                     <p>sin(2*PI*t)</p>
-                    <p>sin(t) + cos(t)</p>
                     <p>2*sin(3*t)</p>
+                    <p>sin(t)*cos(t)</p>
                   </div>
                 </div>
               </div>
